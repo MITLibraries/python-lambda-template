@@ -12,6 +12,7 @@ black = "*"
 coverage = "*"
 coveralls = "*"
 mypy = "*"
+pyflakes = "==2.4.0"
 pylama = {extras = ["all"], version = "*"}
 pytest = "*"
 
