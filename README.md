@@ -15,6 +15,10 @@ A template repository for creating Python lambda functions.
       - Dependabot alerts
       - Dependabot security updates
       - Secret scanning
+7. Create a Sentry project for the app if needed (we want this for most apps):
+   - Send initial exceptions to Sentry project for dev, stage, and prod environments to create them.
+   - Create an alert for the prod environment only, with notifications sent to the appropriate team(s).
+   - If *not* using Sentry, delete Sentry configuration from my_function.py and test_my_function_.py, and remove sentry_sdk from project dependencies.
 
 # my_function
 
@@ -29,6 +33,7 @@ Description of the function/functions.
 
 ## Required ENV
 
+- `SENTRY_DSN` = If set to a valid Sentry DSN, enables Sentry exception monitoring. This is not needed for local development.
 - `WORKSPACE` = Set to `dev` for local development, this will be set to `stage` and `prod` in those environments by Terraform.
 
 ## Running locally
@@ -44,7 +49,7 @@ Description of the function/functions.
 - Run the default handler for the container:
 
   ```bash
-  docker run -p 9000:8080 my_function:latest
+  docker run -e WORKSPACE=dev -p 9000:8080 my_function:latest
   ```
 
 - Post to the container:
