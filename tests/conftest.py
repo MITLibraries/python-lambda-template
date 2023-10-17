@@ -1,9 +1,6 @@
-import os
-
 import pytest
 
 
 @pytest.fixture(autouse=True)
-def test_env():
-    os.environ = {"WORKSPACE": "test"}
-    yield
+def _test_env(monkeypatch):
+    monkeypatch.setenv("WORKSPACE", "test")
