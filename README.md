@@ -32,12 +32,7 @@ Description of the function/functions.
 - To run unit tests: `make test`
 - To lint the repo: `make lint`
 
-## Required ENV
-
-- `SENTRY_DSN` = If set to a valid Sentry DSN, enables Sentry exception monitoring. This is not needed for local development.
-- `WORKSPACE` = Set to `dev` for local development, this will be set to `stage` and `prod` in those environments by Terraform.
-
-## Running locally
+### Running Lambda container images locally
 
 <https://docs.aws.amazon.com/lambda/latest/dg/images-test.html>
 
@@ -65,10 +60,31 @@ Description of the function/functions.
   "You have successfully called this lambda!"
   ```
 
-## Running a different handler in the container
+### Running a different handler in the Lambda container
 
 If this repo contains multiple lambda functions, you can call any handler you copy into the container (see Dockerfile) by name as part of the `docker run` command:
 
 ```bash
 docker run -p 9000:8080 my_function:latest lambdas.<a-different-module>.lambda_handler
+```
+
+## Environment variables
+
+### Required
+
+```
+# If set to a valid Sentry DSN, enables Sentry exception monitoring. This is not needed for local development.
+SENTRY_DSN=
+
+# Set to `dev` for local development, this will be set to `stage` and `prod` in those environments by Terraform.
+WORKSPACE=
+```
+
+### Optional 
+
+_Delete this section if it isn't applicable to the PR._
+
+```
+# Description for optional environment variable
+<OPTIONAL_ENV>=
 ```
