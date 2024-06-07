@@ -2,7 +2,7 @@
 
 A template repository for creating Python lambda functions.
 
-## Repo setup (delete this section and above after initial function setup)
+## Repo Setup (delete this section and above after initial function setup)
 
 1. Rename "my_function" to the desired initial function name across the repo. (May be helpful to do a project-wide find-and-replace).
 2. Update Python version if needed (note: AWS lambda cannot currently support versions higher than 3.9).
@@ -32,12 +32,7 @@ Description of the function/functions.
 - To run unit tests: `make test`
 - To lint the repo: `make lint`
 
-## Required ENV
-
-- `SENTRY_DSN` = If set to a valid Sentry DSN, enables Sentry exception monitoring. This is not needed for local development.
-- `WORKSPACE` = Set to `dev` for local development, this will be set to `stage` and `prod` in those environments by Terraform.
-
-## Running locally
+## Running Locally with Docker
 
 <https://docs.aws.amazon.com/lambda/latest/dg/images-test.html>
 
@@ -65,10 +60,27 @@ Description of the function/functions.
   "You have successfully called this lambda!"
   ```
 
-## Running a different handler in the container
+## Running a Specific Handler Locally with Docker
 
 If this repo contains multiple lambda functions, you can call any handler you copy into the container (see Dockerfile) by name as part of the `docker run` command:
 
 ```bash
 docker run -p 9000:8080 my_function:latest lambdas.<a-different-module>.lambda_handler
+```
+
+## Environment Variables
+
+### Required
+
+```shell
+SENTRY_DSN=### If set to a valid Sentry DSN, enables Sentry exception monitoring. This is not needed for local development.
+WORKSPACE=### Set to `dev` for local development, this will be set to `stage` and `prod` in those environments by Terraform.
+```
+
+### Optional
+
+_Delete this section if it isn't applicable to the PR._
+
+```shell
+<OPTIONAL_ENV>=### Description for optional environment variable
 ```
