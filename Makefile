@@ -65,3 +65,17 @@ black-apply: # Apply changes with 'black'
 
 ruff-apply: # Resolve 'fixable errors' with 'ruff'
 	uv run ruff check --fix .
+
+####################################
+# SAM Lambda
+####################################
+sam-build: # Build SAM image for running Lambda locally
+	sam build --template tests/sam/template.yaml
+
+sam-http-run: # Run lambda locally as an HTTP server
+	sam local start-api --template tests/sam/template.yaml --env-vars tests/sam/env.json
+
+sam-http-ping: # Send curl command to SAM HTTP server
+	curl --location 'http://localhost:3000/myapp' \
+	--header 'Content-Type: application/json' \
+	--data '{"msg":"in a bottle"}'
