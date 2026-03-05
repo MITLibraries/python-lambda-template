@@ -1,19 +1,20 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  MyApp:
+  MyFunction:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
       Timeout: 900
       MemorySize: 1024
+      ImageUri: myfunction:latest
       Events:
-        BagitApi:
+        # NOTE: this Event handler is needed for HTTP invocations of the lambda, not direct invocations
+        HTTPRequest:
           Type: HttpApi
           Properties:
             Path: /{proxy+}
             Method: ANY
-      ImageUri: myapp:latest
       Environment:
         # While tests/sam/env.json is required for sensitive env vars, ALL env vars
         # used in the lambda must exist here as well, even just as "..." placeholders.
@@ -25,4 +26,4 @@ Resources:
       DockerContext: ../../. # Build Lambda Dockerfile
       DockerTag: latest
       Dockerfile: Dockerfile
-      SamResourceId: MyApp
+      SamResourceId: MyFunction

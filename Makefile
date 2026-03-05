@@ -70,7 +70,7 @@ sam-http-run: # SAM: Run lambda locally as an HTTP server
 	sam local start-api --template tests/sam/template.yaml --env-vars tests/sam/env.json
 
 sam-http-ping: # SAM: Send curl command to SAM HTTP server
-	curl --location 'http://localhost:3000/myapp' \
+	curl --location 'http://localhost:3000/myfunction' \
 	--header 'Content-Type: application/json' \
 	--data '{"msg":"in a bottle"}'
 

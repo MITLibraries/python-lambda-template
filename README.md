@@ -63,7 +63,7 @@ Useful when the Lambda will sit behind an ALB, Function URL, or API Gateway.  Th
 make sam-http-run
 ```
 
-This starts a server at `http://localhost:3000`.  Requests must include a path, e.g. `/myapp`, but are arbitrary insofar as the lambda does not utilize them in the request payload. 
+This starts a server at `http://localhost:3000`.  Requests must include a path, e.g. `/myfunction`, but are arbitrary insofar as the lambda does not utilize them in the request payload. 
 
 3- In another terminal, perform an HTTP request via another `Makefile` command:
 ```shell
