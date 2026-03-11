@@ -5,53 +5,75 @@ help: # Preview Makefile commands
 	@awk 'BEGIN { FS = ":.*#"; print "Usage:  make <target>\n\nTargets:" } \
 /^[-_[:alpha:]]+:.?*#/ { printf "  %-15s%s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-#######################
-# Dependency commands
-#######################
+# ensure OS binaries aren't called if naming conflict with Make recipes
+.PHONY: help install venv update test coveralls lint lint-fix security sam-build sam-http-run sam-http-ping sam-invoke
 
-install: # Install Python dependencies
-	pipenv install --dev
-	pipenv run pre-commit install
+##############################################
+# Python Environment and Dependency commands
+##############################################
 
-update: install # Update Python dependencies
-	pipenv clean
-	pipenv update --dev
+install: .venv .git/hooks/pre-commit .git/hooks/pre-push # Install Python dependencies and create virtual environment if not exists
+	uv sync --dev
+
+.venv: # Creates virtual environment if not found
+	@echo "Creating virtual environment at .venv..."
+	uv venv .venv
+
+.git/hooks/pre-commit: # Sets up pre-commit commit hooks if not setup
+	@echo "Installing pre-commit commit hooks..."
+	uv run pre-commit install --hook-type pre-commit
+
+.git/hooks/pre-push: # Sets up pre-commit push hooks if not setup
+	@echo "Installing pre-commit push hooks..."
+	uv run pre-commit install --hook-type pre-push
+
+venv: .venv # Create the Python virtual environment
+
+update: # Update Python dependencies
+	uv lock --upgrade
+	uv sync --dev
 
 ######################
 # Unit test commands
 ######################
 
 test: # Run tests and print a coverage report
-	pipenv run coverage run --source=lambdas -m pytest -vv
-	pipenv run coverage report -m
+	uv run coverage run --source=lambdas -m pytest -vv
+	uv run coverage report -m
 
 coveralls: test # Write coverage data to an LCOV report
-	pipenv run coverage lcov -o ./coverage/lcov.info
+	uv run coverage lcov -o ./coverage/lcov.info
 
 ####################################
-# Code quality and safety commands
+# Code linting and formatting
 ####################################
 
-lint: black mypy ruff safety # Run linters
+lint: # Run linting, alerts only, no code changes
+	uv run ruff format --diff
+	uv run mypy .
+	uv run ruff check .
 
-black: # Run 'black' linter and print a preview of suggested changes
-	pipenv run black --check --diff .
+lint-fix: # Run linting, auto fix behaviors where supported
+	uv run ruff format .
+	uv run ruff check --fix .
 
-mypy: # Run 'mypy' linter
-	pipenv run mypy .
+security: # Run security / vulnerability checks
+	uv run pip-audit
 
-ruff: # Run 'ruff' linter and print a preview of errors
-	pipenv run ruff check .
+####################################
+# SAM Lambda
+####################################
+sam-build: # SAM: Build SAM image for running Lambda locally
+	sam build --template tests/sam/template.yaml
 
-safety: # Check for security vulnerabilities and verify Pipfile.lock is up-to-date
-	pipenv run pip-audit
-	pipenv verify
+sam-http-run: # SAM: Run lambda locally as an HTTP server
+	sam local start-api --template tests/sam/template.yaml --env-vars tests/sam/env.json
 
-lint-apply: # Apply changes with 'black' and resolve 'fixable errors' with 'ruff'
-	black-apply ruff-apply 
+sam-http-ping: # SAM: Send curl command to SAM HTTP server
+	curl --location 'http://localhost:3000/myfunction' \
+	--header 'Content-Type: application/json' \
+	--data '{"msg":"in a bottle"}'
 
-black-apply: # Apply changes with 'black'
-	pipenv run black .
-
-ruff-apply: # Resolve 'fixable errors' with 'ruff'
-	pipenv run ruff check --fix .
+sam-invoke: # SAM: Invoke lambda directly
+	echo '{"msg":"in a bottle"}' \
+	| sam local invoke -e -
