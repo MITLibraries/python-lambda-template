@@ -9,11 +9,8 @@ logger.setLevel(logging.DEBUG)
 
 
 class Config:
-    REQUIRED_ENV_VARS = (
-        "WORKSPACE",
-        "SENTRY_DSN",
-    )
-    OPTIONAL_ENV_VARS = ("WARNING_ONLY_LOGGERS",)
+    REQUIRED_ENV_VARS = ("WORKSPACE",)
+    OPTIONAL_ENV_VARS = ("WARNING_ONLY_LOGGERS", "SENTRY_DSN")
 
     def check_required_env_vars(self) -> None:
         """Method to raise exception if required env vars not set."""
@@ -103,4 +100,4 @@ def configure_sentry() -> None:
             "Sentry DSN found, exceptions will be sent to Sentry with env=%s", env
         )
     else:
-        logger.info("No Sentry DSN found, exceptions will not be sent to Sentry")
+        logger.warning("No Sentry DSN found, exceptions will not be sent to Sentry")

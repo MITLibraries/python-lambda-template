@@ -23,6 +23,12 @@ def test_config_doesnt_configure_sentry_if_dsn_not_present(caplog, monkeypatch):
     assert "No Sentry DSN found, exceptions will not be sent to Sentry" in caplog.text
 
 
+def test_config_doesnt_configure_sentry_if_dsn_is_explicit_none(caplog, monkeypatch):
+    monkeypatch.setenv("SENTRY_DSN", "None")
+    configure_sentry()
+    assert "No Sentry DSN found, exceptions will not be sent to Sentry" in caplog.text
+
+
 def test_config_missing_required_env_vars(monkeypatch):
     monkeypatch.delenv("WORKSPACE")
     with pytest.raises(
