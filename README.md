@@ -98,7 +98,7 @@ Response:
 
 Note: the lambda is still returning a dictionary that _would_ work for an HTTP response, but when invoked directly it's just a dictionary with the relevant information.
 
-### Troubleshoot
+### Troubleshooting
 
 #### Encounter error `botocore.exceptions.TokenRetrievalError`
 
