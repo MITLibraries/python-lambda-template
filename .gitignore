@@ -141,3 +141,7 @@ dmypy.json
 .arch_tag
 .aws-sam/
 tests/sam/env.json
+
+output/
+
+.tool-versions
