@@ -143,3 +143,5 @@ dmypy.json
 tests/sam/env.json
 
 output/
+
+.tool-versions
